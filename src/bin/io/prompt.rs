@@ -116,6 +116,11 @@ where
 /// Request the user to input the recovery phrase
 pub(crate) fn request_recovery_phrase() -> String {
     // let the user input the recovery phrase
+    // let attempt = 0;
+//  while attempt < 3 && Mnemonic::from_phrase(phrase, Language::English).is_err(){
+    // println!("here");
+    // attempt += 1;
+//  }
     let q = Question::input("phrase")
         .message("Please enter the recovery phrase:")
         .validate_on_key(|phrase, _| {
@@ -125,10 +130,12 @@ pub(crate) fn request_recovery_phrase() -> String {
             if Mnemonic::from_phrase(phrase, Language::English).is_ok() {
                 Ok(())
             } else {
+
                 Err("Please enter a valid recovery phrase".to_string())
             }
         })
         .build();
+    // }
 
     let a = requestty::prompt_one(q).expect("recovery phrase");
     let phrase = a.as_string().unwrap().to_string();
