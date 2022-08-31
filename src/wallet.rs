@@ -99,6 +99,7 @@ impl<F: SecureWalletFile> Wallet<F> {
 
     /// Loads wallet given a session
     pub fn from_file(file: F) -> Result<Self, Error> {
+        println!("from file");
         let path = file.path();
         let pwd = file.pwd();
 
@@ -108,9 +109,10 @@ impl<F: SecureWalletFile> Wallet<F> {
             return Err(Error::WalletFileNotExists);
         }
 
+        println!("1");
         // attempt to load and decode wallet
         let mut bytes = fs::read(&pb)?;
-
+        println!("2");
         // check for magic number
         for i in 0..3 {
             if bytes[i] != MAGIC[i] {
@@ -130,7 +132,8 @@ impl<F: SecureWalletFile> Wallet<F> {
         // decrypt and interpret file contents
         match (major, minor) {
             (1, 0) => {
-                bytes = decrypt(&bytes, pwd)?;
+
+                bytes = decrypt(&bytes, pwd)?; //this return if the password is not right /..
                 if bytes.len() != SEED_SIZE {
                     return Err(Error::WalletFileCorrupted);
                 }
@@ -149,7 +152,7 @@ impl<F: SecureWalletFile> Wallet<F> {
                 return Err(Error::UnknownFileVersion(major, minor));
             }
         };
-
+        println!("3");
         // create and return
         Ok(Self {
             wallet: None,
@@ -158,6 +161,7 @@ impl<F: SecureWalletFile> Wallet<F> {
             file: Some(file),
             status: |_| {},
         })
+  
     }
 
     /// Attempts to load a legacy wallet file (no version number)

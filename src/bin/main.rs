@@ -173,10 +173,12 @@ async fn exec() -> Result<(), Error> {
         }
         _ => {
             // load wallet from file
+            println!("here");
             let pwd = prompt::request_auth("Please enter wallet password");
             Wallet::from_file(WalletFile {
                 path: wallet_path,
                 pwd,
+
             })?
         }
     };

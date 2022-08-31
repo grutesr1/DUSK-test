@@ -23,6 +23,8 @@ pub enum Error {
     Transaction(String),
     /// Logging-related error
     LoggingError(String),
+    // Invalid phrase
+    //InvalidMnemonicPhrase(dusk_wallet::Error),
 }
 
 impl From<crate::io::GraphQLError> for Error {
@@ -79,10 +81,16 @@ impl std::fmt::Display for Error {
                 write!(f, "Failed to write to configuration file:\n{}", err)
             }
             Error::Wallet(err) => write!(
+                
                 f,
                 "An error occured within dusk_wallet library:\n{}",
                 err
             ),
+            // Error::InvalidMnemonicPhrase(err)=> write!(
+            //     f,
+            //     "invalid passphrase\n{}",
+            //     err
+            // ),
             Error::NotSupported => {
                 write!(f, "This command doesn't need a wallet.")
             }

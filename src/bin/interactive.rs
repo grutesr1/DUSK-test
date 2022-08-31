@@ -245,14 +245,16 @@ pub(crate) fn load_wallet(
     // find wallets in the specified data directory
     let wallet_dir = wallet_path.dir().unwrap_or_else(WalletPath::default_dir);
     let wallets_found = WalletPath::wallets_in(&wallet_dir)?;
-
+    println!("load wallet");
     // display main menu
     let wallet = match menu_wallet(&wallets_found) {
         MainMenu::Load(path) => {
             let pwd =
                 prompt::request_auth("Please enter you wallet's password");
-            Wallet::from_file(WalletFile { path, pwd })?
+                Wallet::from_file(WalletFile { path, pwd })?
+           
         }
+         
         MainMenu::Create => {
             // create a new randomly generated mnemonic phrase
             let mnemonic =
@@ -284,7 +286,8 @@ pub(crate) fn load_wallet(
         }
         MainMenu::Exit => std::process::exit(0),
     };
-
+    println!("here nog steeds?");
+    // should not return here if error 
     Ok(wallet)
 }
 

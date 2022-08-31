@@ -20,6 +20,7 @@ use requestty::Question;
 use dusk_wallet::{Address, Dusk, Lux, WalletPath};
 
 use crate::Error;
+// use crate::Error::InvalidMnemonicPhrase;
 use dusk_wallet::{
     DEFAULT_GAS_LIMIT, DEFAULT_GAS_PRICE, MAX_CONVERTIBLE, MIN_CONVERTIBLE,
     MIN_GAS_LIMIT,
@@ -132,6 +133,9 @@ pub(crate) fn request_recovery_phrase() -> String {
             } else {
 
                 Err("Please enter a valid recovery phrase".to_string())
+                //return Err(Error::Inval);
+                //Error::InvalidMnemonicPhrase
+
             }
         })
         .build();
