@@ -118,7 +118,7 @@ impl<F: SecureWalletFile> Wallet<F> {
             if bytes[i] != MAGIC[i] {
                 return Self::from_legacy_file(file);
             }
-        }
+        } println!("4");
         bytes.drain(..3);
 
         // check for version information
@@ -132,7 +132,7 @@ impl<F: SecureWalletFile> Wallet<F> {
         // decrypt and interpret file contents
         match (major, minor) {
             (1, 0) => {
-
+                println!("no");
                 bytes = decrypt(&bytes, pwd)?; //this return if the password is not right /..
                 if bytes.len() != SEED_SIZE {
                     return Err(Error::WalletFileCorrupted);
@@ -140,7 +140,13 @@ impl<F: SecureWalletFile> Wallet<F> {
                 seed.copy_from_slice(&bytes);
             }
             (2, 0) => {
+                println!("hallo");
+
                 let content = decrypt(&bytes, pwd)?;
+                println!("content {:?}", content);
+
+
+                println!("hallo2");
                 // extract seed
                 seed.copy_from_slice(&content[0..SEED_SIZE]);
                 // extract addrs
@@ -149,6 +155,7 @@ impl<F: SecureWalletFile> Wallet<F> {
                 addrs = Addresses::from_bytes(&addrs_bytes)?
             }
             _ => {
+                println!("here");
                 return Err(Error::UnknownFileVersion(major, minor));
             }
         };

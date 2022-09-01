@@ -16,6 +16,10 @@ pub(crate) type CoreError =
     dusk_wallet_core::Error<LocalStore, clients::State, clients::Prover>;
 
 /// Errors returned by this library
+
+
+
+// #[derive(strum_macros::Display)]
 pub enum Error {
     /// State Client errors
     State(StateError),
