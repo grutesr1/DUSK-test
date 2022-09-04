@@ -17,8 +17,6 @@ pub(crate) type CoreError =
 
 /// Errors returned by this library
 
-
-
 // #[derive(strum_macros::Display)]
 pub enum Error {
     /// State Client errors

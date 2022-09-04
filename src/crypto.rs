@@ -11,7 +11,6 @@ use block_modes::{BlockMode, Cbc};
 use rand::rngs::OsRng;
 use rand::RngCore;
 
-
 use crate::Error;
 
 type Aes256Cbc = Cbc<Aes256, Pkcs7>;
@@ -29,13 +28,12 @@ pub(crate) fn encrypt(plaintext: &[u8], pwd: Hash) -> Result<Vec<u8>, Error> {
     Ok(ciphertext)
 }
 
-
 /// Decrypts data encrypted with `encrypt`.
 pub(crate) fn decrypt(ciphertext: &[u8], pwd: Hash) -> Result<Vec<u8>, Error> {
     let iv = &ciphertext[..16];
     let enc = &ciphertext[16..];
     println!("1error");
-    
+
     let cipher = Aes256Cbc::new_from_slices(pwd.as_bytes(), iv)?;
     let clone = cipher.clone();
     // match clone{
@@ -43,9 +41,9 @@ pub(crate) fn decrypt(ciphertext: &[u8], pwd: Hash) -> Result<Vec<u8>, Error> {
 
     //    _ => println!("good"),
     // }
-    
+
     let plaintext = cipher.decrypt_vec(enc)?;
-   
+
     Ok(plaintext)
 }
 

@@ -81,7 +81,6 @@ impl std::fmt::Display for Error {
                 write!(f, "Failed to write to configuration file:\n{}", err)
             }
             Error::Wallet(err) => write!(
-                
                 f,
                 "An error occured within dusk_wallet library:\n{}",
                 err

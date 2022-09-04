@@ -178,7 +178,6 @@ async fn exec() -> Result<(), Error> {
             Wallet::from_file(WalletFile {
                 path: wallet_path,
                 pwd,
-
             })?
         }
     };

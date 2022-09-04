@@ -193,7 +193,12 @@ impl Command {
                     None => wallet.default_address(),
                 };
                 let gas = gas_from_args(gas_price, gas_limit);
+                //action of staking should return an error
+                println!("staking?");
+                println!("stake addr{:?}", addr);
                 let tx = wallet.stake(&addr, amt, gas).await?;
+                // needs to return the error
+                println!("command_stake");
                 Ok(RunResult::Tx(tx.hash()))
             }
             Command::StakeInfo { addr, reward } => {
