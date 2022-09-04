@@ -118,7 +118,8 @@ impl<F: SecureWalletFile> Wallet<F> {
             if bytes[i] != MAGIC[i] {
                 return Self::from_legacy_file(file);
             }
-        } println!("4");
+        }
+        println!("4");
         bytes.drain(..3);
 
         // check for version information
@@ -145,7 +146,6 @@ impl<F: SecureWalletFile> Wallet<F> {
                 let content = decrypt(&bytes, pwd)?;
                 println!("content {:?}", content);
 
-
                 println!("hallo2");
                 // extract seed
                 seed.copy_from_slice(&content[0..SEED_SIZE]);
@@ -168,7 +168,6 @@ impl<F: SecureWalletFile> Wallet<F> {
             file: Some(file),
             status: |_| {},
         })
-  
     }
 
     /// Attempts to load a legacy wallet file (no version number)
@@ -381,6 +380,17 @@ impl<F: SecureWalletFile> Wallet<F> {
         amt: Dusk,
         gas: Gas,
     ) -> Result<Transaction, Error> {
+        const MATCHES: [&str; 2] = ["localhost", "127.0.0.1"];
+        let mut local_rusk = false;
+
+        // for m in MATCHES.into_iter() {
+        //     if self.RuskConfig.rusk_addr.
+        //   local_rusk = false;
+        // }
+        if !local_rusk {
+            return Err(Error::StakingNotAllowed);
+        }
+
         if let Some(wallet) = &self.wallet {
             // make sure we own the staking address
             if !addr.is_owned() {
@@ -399,6 +409,7 @@ impl<F: SecureWalletFile> Wallet<F> {
             let sender_index = addr.index()?;
 
             // stake
+            println!("addres given to stake{}", addr);
             let tx = wallet.stake(
                 &mut rng,
                 sender_index,

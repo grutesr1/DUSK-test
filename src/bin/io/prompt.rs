@@ -118,10 +118,10 @@ where
 pub(crate) fn request_recovery_phrase() -> String {
     // let the user input the recovery phrase
     // let attempt = 0;
-//  while attempt < 3 && Mnemonic::from_phrase(phrase, Language::English).is_err(){
-    // println!("here");
+    //  while attempt < 3 && Mnemonic::from_phrase(phrase,
+    // Language::English).is_err(){ println!("here");
     // attempt += 1;
-//  }
+    //  }
     let q = Question::input("phrase")
         .message("Please enter the recovery phrase:")
         .validate_on_key(|phrase, _| {
@@ -131,11 +131,9 @@ pub(crate) fn request_recovery_phrase() -> String {
             if Mnemonic::from_phrase(phrase, Language::English).is_ok() {
                 Ok(())
             } else {
-
                 Err("Please enter a valid recovery phrase".to_string())
                 //return Err(Error::Inval);
                 //Error::InvalidMnemonicPhrase
-
             }
         })
         .build();
@@ -199,8 +197,9 @@ pub(crate) fn request_dir(what_for: &str) -> std::path::PathBuf {
 
 /// Asks the user for confirmation
 pub(crate) fn ask_confirm() -> bool {
+    println!("CONFIRM");
     let q = requestty::Question::confirm("confirm")
-        .message("Transaction ready. Proceed?")
+        .message("Transaction ready. Proceed????")
         .build();
     let a = requestty::prompt_one(q).expect("confirmation");
     a.as_bool().unwrap_or(false)

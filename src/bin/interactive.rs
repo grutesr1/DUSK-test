@@ -181,6 +181,7 @@ fn menu_op(addr: Address, balance: Dusk) -> AddrOp {
             gas_limit: Some(prompt::request_gas_limit()),
             gas_price: Some(prompt::request_gas_price()),
         })),
+        // given commands
         CMI::Stake => AddrOp::Run(Box::new(Command::Stake {
             addr: Some(addr),
             amt: prompt::request_token_amt("stake", balance),
@@ -251,10 +252,9 @@ pub(crate) fn load_wallet(
         MainMenu::Load(path) => {
             let pwd =
                 prompt::request_auth("Please enter you wallet's password");
-                Wallet::from_file(WalletFile { path, pwd })?
-           
+            Wallet::from_file(WalletFile { path, pwd })?
         }
-         
+
         MainMenu::Create => {
             // create a new randomly generated mnemonic phrase
             let mnemonic =
@@ -287,7 +287,7 @@ pub(crate) fn load_wallet(
         MainMenu::Exit => std::process::exit(0),
     };
     println!("here nog steeds?");
-    // should not return here if error 
+    // should not return here if error
     Ok(wallet)
 }
 
