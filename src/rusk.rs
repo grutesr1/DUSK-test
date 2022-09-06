@@ -109,6 +109,7 @@ impl TransportTCP {
     where
         S: Into<String>,
     {
+       
         Self {
             rusk_addr: rusk_addr.into(),
             prov_addr: prov_addr.into(),
@@ -119,10 +120,12 @@ impl TransportTCP {
 #[async_trait]
 impl RuskEndpoint for TransportTCP {
     async fn state(&self) -> Result<Channel, Error> {
+        println!("state ADDR{}", self.rusk_addr);
         Ok(Endpoint::from_str(&self.rusk_addr)?.connect().await?)
     }
 
     async fn prover(&self) -> Result<Channel, Error> {
+        println!("PROVER ADDR{}", self.rusk_addr);
         Ok(Endpoint::from_str(&self.prov_addr)?.connect().await?)
     }
 }

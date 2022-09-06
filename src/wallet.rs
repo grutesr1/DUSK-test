@@ -27,7 +27,7 @@ use rand::SeedableRng;
 use crate::clients::{Prover, State};
 use crate::crypto::{decrypt, encrypt};
 use crate::dusk::{Dusk, Lux};
-use crate::rusk::{RuskClient, RuskEndpoint};
+use crate::rusk::{RuskClient, RuskEndpoint, TransportTCP};
 use crate::store::LocalStore;
 use crate::Error;
 use crate::{DEFAULT_GAS_LIMIT, DEFAULT_GAS_PRICE, MIN_GAS_LIMIT, SEED_SIZE};
@@ -59,6 +59,7 @@ pub struct Wallet<F: SecureWalletFile> {
     store: LocalStore,
     file: Option<F>,
     status: fn(status: &str),
+    // rusk_addr,
 }
 
 /// Provides access to a secure wallet file
@@ -379,14 +380,23 @@ impl<F: SecureWalletFile> Wallet<F> {
         addr: &Address,
         amt: Dusk,
         gas: Gas,
+        // rusk_addr: TransportTCP,
+        // state: wallet,
     ) -> Result<Transaction, Error> {
         const MATCHES: [&str; 2] = ["localhost", "127.0.0.1"];
         let mut local_rusk = false;
-
+        // the rusk addr from the tcp connection ?
+        //println!("rusk addr{:?}", rusk_addr);
         // for m in MATCHES.into_iter() {
-        //     if self.RuskConfig.rusk_addr.
-        //   local_rusk = false;
+        //     if rusk_addr.contains(m){
+        //         local_rusk = true;
+        //         break;
+        //     }
+        
         // }
+
+        //self.status.rusk_addr 
+
         if !local_rusk {
             return Err(Error::StakingNotAllowed);
         }
@@ -423,6 +433,7 @@ impl<F: SecureWalletFile> Wallet<F> {
         } else {
             Err(Error::Offline)
         }
+    
     }
 
     /// Obtains stake information for a given address
