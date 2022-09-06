@@ -15,6 +15,7 @@ pub(crate) use error::Error;
 pub(crate) use menu::Menu;
 
 use clap::Parser;
+use tokio::io::copy;
 use std::fs;
 use std::path::PathBuf;
 use std::str::FromStr;
@@ -175,6 +176,7 @@ async fn exec() -> Result<(), Error> {
             // load wallet from file
             println!("here");
             let pwd = prompt::request_auth("Please enter wallet password");
+            // it's here that the password get's checked
             Wallet::from_file(WalletFile {
                 path: wallet_path,
                 pwd,

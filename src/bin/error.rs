@@ -51,8 +51,11 @@ impl From<std::io::Error> for Error {
     }
 }
 
+// where is this sett in case of the password error
 impl From<dusk_wallet::Error> for Error {
     fn from(e: dusk_wallet::Error) -> Self {
+        println!("******* Error  ******\n");
+        println!("Set Error in bin {:?}", e);
         Self::Wallet(e)
     }
 }

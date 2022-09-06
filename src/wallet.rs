@@ -100,7 +100,7 @@ impl<F: SecureWalletFile> Wallet<F> {
 
     /// Loads wallet given a session
     pub fn from_file(file: F) -> Result<Self, Error> {
-        println!("from file");
+        println!("********     From file    ********\n");
         let path = file.path();
         let pwd = file.pwd();
 
@@ -110,17 +110,15 @@ impl<F: SecureWalletFile> Wallet<F> {
             return Err(Error::WalletFileNotExists);
         }
 
-        println!("1");
         // attempt to load and decode wallet
         let mut bytes = fs::read(&pb)?;
-        println!("2");
+
         // check for magic number
         for i in 0..3 {
             if bytes[i] != MAGIC[i] {
                 return Self::from_legacy_file(file);
             }
         }
-        println!("4");
         bytes.drain(..3);
 
         // check for version information
@@ -134,20 +132,20 @@ impl<F: SecureWalletFile> Wallet<F> {
         // decrypt and interpret file contents
         match (major, minor) {
             (1, 0) => {
-                println!("no");
+                println!("pwd {:?}\n", pwd);
+
                 bytes = decrypt(&bytes, pwd)?; //this return if the password is not right /..
+                
+
                 if bytes.len() != SEED_SIZE {
                     return Err(Error::WalletFileCorrupted);
                 }
                 seed.copy_from_slice(&bytes);
             }
             (2, 0) => {
-                println!("hallo");
-
+                println!("2,0");
                 let content = decrypt(&bytes, pwd)?;
-                println!("content {:?}", content);
 
-                println!("hallo2");
                 // extract seed
                 seed.copy_from_slice(&content[0..SEED_SIZE]);
                 // extract addrs

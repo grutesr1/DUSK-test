@@ -17,7 +17,7 @@ use bip39::{Language, Mnemonic};
 use blake3::Hash;
 use requestty::Question;
 
-use dusk_wallet::{Address, Dusk, Lux, WalletPath};
+use dusk_wallet::{Address, Dusk, Lux, Wallet, WalletPath};
 
 use crate::Error;
 // use crate::Error::InvalidMnemonicPhrase;
@@ -117,7 +117,7 @@ where
 /// Request the user to input the recovery phrase
 pub(crate) fn request_recovery_phrase() -> String {
     // let the user input the recovery phrase
-    // let attempt = 0;
+    let mut attempt = 0;
     //  while attempt < 3 && Mnemonic::from_phrase(phrase,
     // Language::English).is_err(){ println!("here");
     // attempt += 1;
@@ -128,10 +128,35 @@ pub(crate) fn request_recovery_phrase() -> String {
             Mnemonic::from_phrase(phrase, Language::English).is_ok()
         })
         .validate(|phrase, _| {
+            // while attempt < 3 {
+            //     let mut st = Mnemonic::from_phrase(phrase,
+            // Language::English);     match st{
+            //         Ok(st) => phrase = Some(st),
+            //         err =>
+
+            //     }
+
+            // }
+            // let mut st = Mnemonic::from_phrase(phrase, Language::English);
+            // match st {
+            //     Ok(st) => Some(st),
+            //     Err(err) => match err {
+            //         Error::Wallet(err) => {
+            //             println!("wrong phrase");
+            //             attempt +1;
+            //         }
+            //     },
+            //     _ => None
+            // }
+
             if Mnemonic::from_phrase(phrase, Language::English).is_ok() {
+                println!("from_phrase ");
+
                 Ok(())
             } else {
+                println!("error again");
                 Err("Please enter a valid recovery phrase".to_string())
+
                 //return Err(Error::Inval);
                 //Error::InvalidMnemonicPhrase
             }
