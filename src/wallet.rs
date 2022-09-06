@@ -385,17 +385,6 @@ impl<F: SecureWalletFile> Wallet<F> {
     ) -> Result<Transaction, Error> {
         const MATCHES: [&str; 2] = ["localhost", "127.0.0.1"];
         let mut local_rusk = false;
-        // the rusk addr from the tcp connection ?
-        //println!("rusk addr{:?}", rusk_addr);
-        // for m in MATCHES.into_iter() {
-        //     if rusk_addr.contains(m){
-        //         local_rusk = true;
-        //         break;
-        //     }
-        
-        // }
-
-        //self.status.rusk_addr 
 
         if !local_rusk {
             return Err(Error::StakingNotAllowed);
@@ -433,7 +422,6 @@ impl<F: SecureWalletFile> Wallet<F> {
         } else {
             Err(Error::Offline)
         }
-    
     }
 
     /// Obtains stake information for a given address

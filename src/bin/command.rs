@@ -8,7 +8,6 @@ use clap::Subcommand;
 use dusk_jubjub::BlsScalar;
 use std::{fmt, path::PathBuf};
 
-
 use crate::Error;
 use crate::{io::prompt, WalletFile};
 use dusk_wallet::{Address, Dusk, Gas, Lux, Wallet};
@@ -197,8 +196,6 @@ impl Command {
                 //action of staking should return an error
                 println!("staking?");
                 println!("stake addr{:?}", addr);
-                //let configaddr = 
-                // println!("config info {:?}",  )
                 let tx = wallet.stake(&addr, amt, gas).await?;
                 // needs to return the error
                 println!("command_stake");

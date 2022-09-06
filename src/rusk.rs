@@ -109,7 +109,6 @@ impl TransportTCP {
     where
         S: Into<String>,
     {
-       
         Self {
             rusk_addr: rusk_addr.into(),
             prov_addr: prov_addr.into(),

@@ -252,24 +252,24 @@ pub(crate) fn load_wallet(
         MainMenu::Load(path) => {
             let pwd =
                 prompt::request_auth("Please enter you wallet's password");
-             Wallet::from_file(WalletFile { path, pwd })?
+            Wallet::from_file(WalletFile { path, pwd })?
 
-                 // let wallet = match menu_wallet(&wallets_found) {
-    //     MainMenu::Load(path) => {
-    //         let pwd = prompt::request_auth("Please enter you wallet's password");
-    //         let st = Wallet::from_file(WalletFile { path, pwd });
-    //         match st{
-    //             Ok(st) => Some(st),
-    //             Err(err) => match err {
-    //                 dusk_wallet::Error::InvalidPassword =>{
-    //                     println!("wrong password");
-    //                 }
-    //                  _
-    //                 }
-                  
-    //             }
-    //         }
-        
+            // let wallet = match menu_wallet(&wallets_found) {
+            //     MainMenu::Load(path) => {
+            //         let pwd = prompt::request_auth("Please enter you wallet's
+            // password");         let st =
+            // Wallet::from_file(WalletFile { path, pwd });
+            //         match st{
+            //             Ok(st) => Some(st),
+            //             Err(err) => match err {
+            //                 dusk_wallet::Error::InvalidPassword =>{
+            //                     println!("wrong password");
+            //                 }
+            //                  _
+            //                 }
+
+            //             }
+            //         }
         }
 
         MainMenu::Create => {
