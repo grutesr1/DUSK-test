@@ -250,9 +250,6 @@ pub(crate) fn load_wallet(
     // display main menu
 
     let wallet = match menu_wallet(&wallets_found) {
-
-
-
         MainMenu::Create => {
             // create a new randomly generated mnemonic phrase
             let mnemonic =
@@ -269,9 +266,10 @@ pub(crate) fn load_wallet(
             w.save_to(WalletFile { path, pwd })?;
             w
         }
+
         MainMenu::Recover => {
             // ask user for 12-word recovery phrase
-            let phrase = prompt::request_recovery_phrase();
+            let phrase = prompt::request_recovery_phrase()?;
 
             // let the user give this wallet a name
             let name = prompt::request_wallet_name(&wallet_dir);
@@ -285,126 +283,27 @@ pub(crate) fn load_wallet(
         }
         MainMenu::Exit => std::process::exit(0),
 
-
         MainMenu::Load(path) => {
-
-            // ** request_auth
-            // ** Check if correct password
-            // ** if not re-enter 3 times
-            // ** right do nothing
-            // ** wrong exit ( this happens already cause the error is set so shoudl be solvable with ?)
-
-            // let mut attempt = Some(0);
-            let  i = 0;
-           // while let Some(i) = attempt {
-            //while i < 3 {
-               
-                
-                  while true {
-
-                    let pwd = prompt::request_auth(
-                        "Please enter you wallet's password");
-                        let res = Wallet::from_file(WalletFile { path, pwd });
-                        if res.is_ok(){
-                            return Ok(res?);
-                        }
-                   }
-                   return 
-
-
+            let mut attempt = 1;
+            loop {
+                let pwd =
+                    prompt::request_auth("Please enter you wallet's password");
+                match Wallet::from_file(WalletFile {
+                    path: path.clone(),
+                    pwd,
+                }) {
+                    Ok(res) => break res,
+                    Err(err) if attempt > 2 => {
+                        return Err(err)?;
+                    }
+                    Err(_) => {
+                        attempt += 1;
+                    }
                 }
-
-
-            //         // add path to the box ?
-            //     let mut st = Wallet::from_file(WalletFile { path, pwd });
-            //     // match let mut &St &Wallet::from_file(WalletFile { path, pwd }){
-            //     match st{
-            //         Ok(st) => st,
-            //         Err(err) => {
-            //             // or we do here the loop ...?
-            //             println!("wrong password please try again");
-            //             //let mut res = Wallet::from_file(WalletFile { path, pwd });
-            //             //two owners for path move ownership around ... 
-            //             //when value goes out of scope drops
-            //             while i < 3  && Wallet::from_file(WalletFile {path, pwd }).is_err(){
-            //                 let pwd = prompt::request_auth(
-            //                     "Please enter you wallet's password");
-            //                     Wallet::from_file(WalletFile {path, pwd });
-            //                     i + 1 ;
-            //             }
-            //             Wallet::from_file(WalletFile { path, pwd })?
-            //         }
-            //         //Wallet::from_file(WalletFile { path, pwd })?
-
-            //             //}
-                       
-            //            // attempt += 1; // it's not the same type
-            //     }
-
-            // }
-                
-            
-                
-
-
-
-
-
-
-
-            
-        
-
-                // if i < 3 {
-
-                //     let pwd = prompt::request_auth(
-                //         "Please enter you wallet's password",
-                //     );
-
-                //     let st = Wallet::from_file(WalletFile { path, pwd });
-
-                //     match st {
-                //         Ok(st) => Wallet::from_file(WalletFile { path, pwd }),
-                //         Err(err) => {
-                //             attempt = Some(i+1);
-                //             println!("wrong password please try again");
-                            
-                           
-                //         }
-                //     }
-                // }
-                // else {
-                    
-                // }
-            
-
-            // let wallet = match menu_wallet(&wallets_found) {
-            //     MainMenu::Load(path) => {
-            //         let pwd = prompt::request_auth("Please enter you wallet's
-            // password");         let st =
-            // Wallet::from_file(WalletFile { path, pwd });
-            //         match st{
-            //             Ok(st) => Some(st),
-            //             Err(err) => match err {
-            //                 dusk_wallet::Error::InvalidPassword =>{
-            //                     println!("wrong password");
-            //                 }
-            //                  _
-            //                 }
-
-            //             }
-            //         }
-       
-
-
-
-
-
-
+            }
+        }
     };
-  
-    // should not return here if error
-    
+
     Ok(wallet)
 }
 

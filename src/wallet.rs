@@ -135,7 +135,6 @@ impl<F: SecureWalletFile> Wallet<F> {
                 println!("pwd {:?}\n", pwd);
 
                 bytes = decrypt(&bytes, pwd)?; //this return if the password is not right /..
-                
 
                 if bytes.len() != SEED_SIZE {
                     return Err(Error::WalletFileCorrupted);

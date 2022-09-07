@@ -5,6 +5,9 @@
 // Copyright (c) DUSK NETWORK. All rights reserved.
 
 /// Errors generated from this crate
+
+use anyhow::Result;
+
 #[derive(Debug)]
 pub enum Error {
     /// TOML deserialization errors
@@ -23,8 +26,9 @@ pub enum Error {
     Transaction(String),
     /// Logging-related error
     LoggingError(String),
-    // Invalid phrase
     //InvalidMnemonicPhrase(dusk_wallet::Error),
+    InvalidPhrase(anyhow::Error),
+
 }
 
 impl From<crate::io::GraphQLError> for Error {
@@ -66,6 +70,22 @@ impl From<tracing::dispatcher::SetGlobalDefaultError> for Error {
     }
 }
 
+impl From<bip39::ErrorKind> for Error{
+    fn from (err: bip39::ErrorKind)-> Self{
+        Self::InvalidPhrase(err)
+    }
+
+}
+
+impl From<anyhow::Error> for Error{
+    fn from (err: anyhow::Error)-> Self{
+        Self::InvalidPhrase(err)
+    }
+
+}
+
+
+
 impl From<tracing::metadata::ParseLevelError> for Error {
     fn from(err: tracing::metadata::ParseLevelError) -> Self {
         Self::LoggingError(err.to_string())
@@ -88,11 +108,12 @@ impl std::fmt::Display for Error {
                 "An error occured within dusk_wallet library:\n{}",
                 err
             ),
-            // Error::InvalidMnemonicPhrase(err)=> write!(
-            //     f,
-            //     "invalid passphrase\n{}",
-            //     err
-            // ),
+            Error::InvalidPhrase(err)=> write!(
+                f,
+                "invalid passphrase\n{}",
+                err
+                
+            ),
             Error::NotSupported => {
                 write!(f, "This command doesn't need a wallet.")
             }

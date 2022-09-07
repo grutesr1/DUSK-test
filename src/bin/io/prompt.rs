@@ -20,6 +20,7 @@ use requestty::Question;
 use dusk_wallet::{Address, Dusk, Lux, Wallet, WalletPath};
 
 use crate::Error;
+
 // use crate::Error::InvalidMnemonicPhrase;
 use dusk_wallet::{
     DEFAULT_GAS_LIMIT, DEFAULT_GAS_PRICE, MAX_CONVERTIBLE, MIN_CONVERTIBLE,
@@ -114,59 +115,31 @@ where
     }
 }
 
-/// Request the user to input the recovery phrase
-pub(crate) fn request_recovery_phrase() -> String {
+/// Request the user to input the recovery phrase  Result<String, Error>
+pub(crate) fn request_recovery_phrase() -> Result<String, Error> {
     // let the user input the recovery phrase
-    let mut attempt = 0;
-    //  while attempt < 3 && Mnemonic::from_phrase(phrase,
-    // Language::English).is_err(){ println!("here");
-    // attempt += 1;
-    //  }
-    let q = Question::input("phrase")
-        .message("Please enter the recovery phrase:")
-        .validate_on_key(|phrase, _| {
-            Mnemonic::from_phrase(phrase, Language::English).is_ok()
-        })
-        .validate(|phrase, _| {
-            // while attempt < 3 {
-            //     let mut st = Mnemonic::from_phrase(phrase,
-            // Language::English);     match st{
-            //         Ok(st) => phrase = Some(st),
-            //         err =>
+    let mut attempt = 1;
+    loop {
+        let q = Question::input("phrase")
+            .message("Please enter the recovery phrase:")
+            .build();
+        let a = requestty::prompt_one(q).expect("recovery phrase");
+        let phrase = a.as_string().unwrap().to_string();
 
-            //     }
+        
+        match Mnemonic::from_phrase(phrase.as_str(), Language::English) {
 
-            // }
-            // let mut st = Mnemonic::from_phrase(phrase, Language::English);
-            // match st {
-            //     Ok(st) => Some(st),
-            //     Err(err) => match err {
-            //         Error::Wallet(err) => {
-            //             println!("wrong phrase");
-            //             attempt +1;
-            //         }
-            //     },
-            //     _ => None
-            // }
-
-            if Mnemonic::from_phrase(phrase, Language::English).is_ok() {
-                println!("from_phrase ");
-
-                Ok(())
-            } else {
-                println!("error again");
-                Err("Please enter a valid recovery phrase".to_string())
-
-                //return Err(Error::Inval);
-                //Error::InvalidMnemonicPhrase
+            Ok(res) => break Ok(phrase),
+            Err(err) if attempt > 2 => {
+                println!("error{err}");
+                return Err(err);
             }
-        })
-        .build();
-    // }
-
-    let a = requestty::prompt_one(q).expect("recovery phrase");
-    let phrase = a.as_string().unwrap().to_string();
-    phrase
+            Err(_) => {
+                println!("Invalid recovery phrase please try again");
+                attempt += 1;
+            }
+        }
+    }
 }
 
 /// Request a name for the wallet

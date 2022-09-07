@@ -15,10 +15,10 @@ pub(crate) use error::Error;
 pub(crate) use menu::Menu;
 
 use clap::Parser;
-use tokio::io::copy;
 use std::fs;
 use std::path::PathBuf;
 use std::str::FromStr;
+use tokio::io::copy;
 use tracing::{warn, Level};
 
 use bip39::{Language, Mnemonic, MnemonicType};
@@ -157,7 +157,7 @@ async fn exec() -> Result<(), Error> {
         }
         Command::Restore => {
             // ask user for 12-word recovery phrase
-            let phrase = prompt::request_recovery_phrase();
+            let phrase = prompt::request_recovery_phrase()?;
             // ask user for a password to secure the wallet
             let pwd = prompt::create_password();
             // create wallet
