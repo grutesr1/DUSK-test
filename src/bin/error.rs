@@ -70,12 +70,12 @@ impl From<tracing::dispatcher::SetGlobalDefaultError> for Error {
     }
 }
 
-impl From<bip39::ErrorKind> for Error{
-    fn from (err: bip39::ErrorKind)-> Self{
-        Self::InvalidPhrase(err)
-    }
+// impl From<bip39::ErrorKind> for Error{
+//     fn from (err: bip39::ErrorKind)-> Self{
+//         Self::InvalidPhrase(err)
+//     }
 
-}
+// }
 
 impl From<anyhow::Error> for Error{
     fn from (err: anyhow::Error)-> Self{

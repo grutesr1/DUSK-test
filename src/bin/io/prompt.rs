@@ -125,14 +125,11 @@ pub(crate) fn request_recovery_phrase() -> Result<String, Error> {
             .build();
         let a = requestty::prompt_one(q).expect("recovery phrase");
         let phrase = a.as_string().unwrap().to_string();
-
-        
         match Mnemonic::from_phrase(phrase.as_str(), Language::English) {
-
             Ok(res) => break Ok(phrase),
             Err(err) if attempt > 2 => {
                 println!("error{err}");
-                return Err(err);
+                return Err(Error::InvalidPhrase(err));
             }
             Err(_) => {
                 println!("Invalid recovery phrase please try again");
