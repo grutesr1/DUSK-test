@@ -6,8 +6,6 @@
 
 /// Errors generated from this crate
 
-use anyhow::Result;
-
 #[derive(Debug)]
 pub enum Error {
     /// TOML deserialization errors
@@ -28,7 +26,6 @@ pub enum Error {
     LoggingError(String),
     //InvalidMnemonicPhrase(dusk_wallet::Error),
     InvalidPhrase(anyhow::Error),
-
 }
 
 impl From<crate::io::GraphQLError> for Error {
@@ -58,8 +55,6 @@ impl From<std::io::Error> for Error {
 // where is this sett in case of the password error
 impl From<dusk_wallet::Error> for Error {
     fn from(e: dusk_wallet::Error) -> Self {
-        println!("******* Error  ******\n");
-        println!("Set Error in bin {:?}", e);
         Self::Wallet(e)
     }
 }
@@ -77,14 +72,11 @@ impl From<tracing::dispatcher::SetGlobalDefaultError> for Error {
 
 // }
 
-impl From<anyhow::Error> for Error{
-    fn from (err: anyhow::Error)-> Self{
+impl From<anyhow::Error> for Error {
+    fn from(err: anyhow::Error) -> Self {
         Self::InvalidPhrase(err)
     }
-
 }
-
-
 
 impl From<tracing::metadata::ParseLevelError> for Error {
     fn from(err: tracing::metadata::ParseLevelError) -> Self {
@@ -108,13 +100,15 @@ impl std::fmt::Display for Error {
                 "An error occured within dusk_wallet library:\n{}",
                 err
             ),
-            Error::InvalidPhrase(err)=> write!(
-                f,
-                "invalid passphrase\n{}",
-                err
-                
-            ),
+            Error::InvalidPhrase(err) => {
+                write!(
+                    f,
+                    "An error occured within rusk_wallet binary:\n{}",
+                    err
+                )
+            }
             Error::NotSupported => {
+                println!("not supported error");
                 write!(f, "This command doesn't need a wallet.")
             }
             Error::Transaction(err) => write!(f, "Transaction failed: {}", err),

@@ -246,7 +246,6 @@ pub(crate) fn load_wallet(
     // find wallets in the specified data directory
     let wallet_dir = wallet_path.dir().unwrap_or_else(WalletPath::default_dir);
     let wallets_found = WalletPath::wallets_in(&wallet_dir)?;
-    println!("*******Load wallet******");
     // display main menu
 
     let wallet = match menu_wallet(&wallets_found) {
@@ -297,6 +296,7 @@ pub(crate) fn load_wallet(
                         return Err(err)?;
                     }
                     Err(_) => {
+                        println!("Invalid password please try again");
                         attempt += 1;
                     }
                 }

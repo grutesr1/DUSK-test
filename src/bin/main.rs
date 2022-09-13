@@ -18,7 +18,6 @@ use clap::Parser;
 use std::fs;
 use std::path::PathBuf;
 use std::str::FromStr;
-use tokio::io::copy;
 use tracing::{warn, Level};
 
 use bip39::{Language, Mnemonic, MnemonicType};
@@ -174,9 +173,7 @@ async fn exec() -> Result<(), Error> {
         }
         _ => {
             // load wallet from file
-            println!("here");
             let pwd = prompt::request_auth("Please enter wallet password");
-            // it's here that the password get's checked
             Wallet::from_file(WalletFile {
                 path: wallet_path,
                 pwd,

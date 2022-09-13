@@ -250,6 +250,7 @@ impl Command {
             _ => {
                 // commands that don't use a wallet (like create or restore)
                 // cannot be run directly
+                println!("not supported error");
                 Err(Error::NotSupported)
             }
         }

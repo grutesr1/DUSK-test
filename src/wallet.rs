@@ -27,9 +27,9 @@ use rand::SeedableRng;
 use crate::clients::{Prover, State};
 use crate::crypto::{decrypt, encrypt};
 use crate::dusk::{Dusk, Lux};
-use crate::rusk::{RuskClient, RuskEndpoint, TransportTCP};
+use crate::rusk::{RuskClient, RuskEndpoint};
 use crate::store::LocalStore;
-use crate::Error;
+use crate::{Error, TransportTCP};
 use crate::{DEFAULT_GAS_LIMIT, DEFAULT_GAS_PRICE, MIN_GAS_LIMIT, SEED_SIZE};
 
 /// Default data directory name
@@ -100,7 +100,6 @@ impl<F: SecureWalletFile> Wallet<F> {
 
     /// Loads wallet given a session
     pub fn from_file(file: F) -> Result<Self, Error> {
-        println!("********     From file    ********\n");
         let path = file.path();
         let pwd = file.pwd();
 
@@ -132,8 +131,6 @@ impl<F: SecureWalletFile> Wallet<F> {
         // decrypt and interpret file contents
         match (major, minor) {
             (1, 0) => {
-                println!("pwd {:?}\n", pwd);
-
                 bytes = decrypt(&bytes, pwd)?; //this return if the password is not right /..
 
                 if bytes.len() != SEED_SIZE {
@@ -142,7 +139,6 @@ impl<F: SecureWalletFile> Wallet<F> {
                 seed.copy_from_slice(&bytes);
             }
             (2, 0) => {
-                println!("2,0");
                 let content = decrypt(&bytes, pwd)?;
 
                 // extract seed
@@ -153,11 +149,10 @@ impl<F: SecureWalletFile> Wallet<F> {
                 addrs = Addresses::from_bytes(&addrs_bytes)?
             }
             _ => {
-                println!("here");
                 return Err(Error::UnknownFileVersion(major, minor));
             }
         };
-        println!("3");
+
         // create and return
         Ok(Self {
             wallet: None,
@@ -381,7 +376,11 @@ impl<F: SecureWalletFile> Wallet<F> {
         // state: wallet,
     ) -> Result<Transaction, Error> {
         const MATCHES: [&str; 2] = ["localhost", "127.0.0.1"];
-        let mut local_rusk = false;
+        let local_rusk = false;
+
+
+        // to have the rusk.addr which is generated through tcp when called in the bin
+        // but how do we get it here what do i miss. 
 
         if !local_rusk {
             return Err(Error::StakingNotAllowed);

@@ -143,12 +143,11 @@ impl From<block_modes::BlockModeError> for Error {
     }
 }
 
-impl From<bip39::ErrorKind> for Error{
-    fn from(_:bip39::ErrorKind)-> Self{
+impl From<bip39::ErrorKind> for Error {
+    fn from(_: bip39::ErrorKind) -> Self {
         Self::InvalidMnemonicPhrase
     }
 }
-
 
 impl From<StateError> for Error {
     fn from(e: StateError) -> Self {
