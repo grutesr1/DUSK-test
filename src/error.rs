@@ -15,9 +15,13 @@ use super::clients;
 pub(crate) type CoreError =
     dusk_wallet_core::Error<LocalStore, clients::State, clients::Prover>;
 
+use thiserror::Error;
+
+
 /// Errors returned by this library
 
 // #[derive(strum_macros::Display)]
+#[derive(thiserror::Error)]
 pub enum Error {
     /// State Client errors
     State(StateError),
@@ -187,7 +191,7 @@ impl From<CoreError> for Error {
     }
 }
 
-impl std::error::Error for Error {}
+
 
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {

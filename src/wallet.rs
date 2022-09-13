@@ -29,7 +29,7 @@ use crate::crypto::{decrypt, encrypt};
 use crate::dusk::{Dusk, Lux};
 use crate::rusk::{RuskClient, RuskEndpoint};
 use crate::store::LocalStore;
-use crate::{Error, TransportTCP};
+use crate::{Error};
 use crate::{DEFAULT_GAS_LIMIT, DEFAULT_GAS_PRICE, MIN_GAS_LIMIT, SEED_SIZE};
 
 /// Default data directory name
