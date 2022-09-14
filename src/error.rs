@@ -6,6 +6,7 @@
 
 use crate::store::LocalStore;
 use phoenix_core::Error as PhoenixError;
+//use prost::encoding::bytes;
 use rand_core::Error as RngError;
 use std::{fmt, io};
 use tonic::codegen::http;
@@ -17,85 +18,122 @@ pub(crate) type CoreError =
 
 use thiserror::Error;
 
-
 /// Errors returned by this library
 
-// #[derive(strum_macros::Display)]
-#[derive(thiserror::Error)]
+#[derive(Debug, thiserror::Error)]
+
 pub enum Error {
-    /// State Client errors
+    ///
+    #[error("State Client errors")]
     State(StateError),
     /// Prover Client errors
+    #[error("ProverError")]
     Prover(ProverError),
     /// Local Store errors
+    #[error("ProverError")]
     Store(StoreError),
     /// Network error
+    #[error("Network error")]
     Network(tonic::transport::Error),
     /// Rusk uri failure
+    #[error("Rusk uri failure")]
     RuskURI(http::uri::InvalidUri),
     /// Rusk connection failure
+    #[error(" Rusk connection failure")]
     RuskConn(tonic::transport::Error),
     /// Prover cluster connection failure
+    #[error("Prover cluster connection failure")]
     ProverConn(tonic::transport::Error),
     /// Command not available in offline mode
+    #[error("Command not available in offline mode")]
     Offline,
     /// Unauthorized to access this wallet
+    #[error("Unauthorized to access this wallet")]
     Unauthorized,
     /// Filesystem errors
+    #[error("Filesystem errors")]
     IO(io::Error),
     /// JSON serialization errors
+    #[error("JSON serialization errors")]
     Json(serde_json::Error),
     /// Bytes encoding errors
+    #[error("Bytes encoding errors")]
     Bytes(dusk_bytes::Error),
     /// Base58 errors
+    #[error("Base58 errors")]
     Base58(bs58::decode::Error),
     /// Canonical errors
+    #[error("Canonical errors")]
     Canon(canonical::CanonError),
     /// Random number generator errors
+    #[error("Random number generator errors")]
     Rng(RngError),
     /// Transaction model errors
+    #[error("Transaction model errors")]
     Phoenix(PhoenixError),
     /// Not enough balance to perform transaction
+    #[error("Not enough balance to perform transaction")]
     NotEnoughBalance,
     /// Amount to transfer/stake cannot be zero
+    #[error("Amount to transfer/stake cannot be zero")]
     AmountIsZero,
     /// Note combination for the given value is impossible given the maximum
-    /// amount of inputs in a transaction
+    #[error(
+        "Note combination for the given value is impossible given 
+    the maximum amount of inputs in a transaction"
+    )]
     NoteCombinationProblem,
     /// Not enough gas to perform this transaction
+    #[error("Not enough gas to perform this transaction")]
     NotEnoughGas,
     /// Staking is only allowed when you're running your own local Rusk
     /// instance (Tip: Point `rusk_addr` to "localhost" or "127.0.0.1")
+    #[error("Staking is only allowed when you're running your own local Rusk instance Tip: Point `rusk_addr` to localhost")]
     StakingNotAllowed,
     /// A stake already exists for this key
+    #[error("A stake already exists for this key ")]
     AlreadyStaked,
     /// A stake does not exist for this key
+    #[error("A stake does not exist for this key ")]
     NotStaked,
     /// No reward available for this key
+    #[error("No reward available for this key ")]
     NoReward,
     /// Invalid address
+    #[error("Invalid address ")]
     BadAddress,
     /// Address does not belong to this wallet
+    #[error("Address does not belong to this wallet ")]
     AddressNotOwned,
     /// Recovery phrase is not valid
+    #[error("Recovery phrase is not valid ")]
     InvalidMnemonicPhrase,
     /// Path provided is not a directory
+    #[error("Path provided is not a directory ")]
     NotDirectory,
     /// Wallet file content is not valid
+    #[error("Wallet file content is not valid ")]
     WalletFileCorrupted,
     /// File version not recognized
+    #[error(" File version not recognized ")]
     UnknownFileVersion(u8, u8),
     /// Wallet file not found on disk
+    #[error("Wallet file not found on disk ")]
     WalletFileNotExists,
     /// A wallet file with this name already exists
+    #[error("A wallet file with this name already exists ")]
     WalletFileExists,
     /// Wallet file is missing
+    #[error("Wallet file is missing ")]
     WalletFileMissing,
     /// Wrong wallet password
+    #[error("Wrong wallet password ")]
     InvalidPassword,
     /// Socket connection is not available on Windows
+    #[error("Socket connection is not available on Windows ")]
     SocketsNotSupported(String),
     /// Status callback needs to be set before connecting
+    #[error("Status callback needs to be set before connecting ")]
     StatusWalletConnected,
 }
 
@@ -191,95 +229,8 @@ impl From<CoreError> for Error {
     }
 }
 
-
-
-impl fmt::Display for Error {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            Error::State(err) => write!(f, "{}", err),
-            Error::Prover(err) => write!(f, "{}", err),
-            Error::Store(err) => write!(f, "{}", err),
-            Error::RuskURI(err) => write!(f, "Invalid URI provided for Rusk:\n{}", err),
-            Error::Network(err) => write!(f, "A network error occurred while communicating with Rusk: {}", err),
-            Error::RuskConn(err) => write!(f, "Couldn't establish connection with Rusk: {}\nPlease check your settings and try again.", err),
-            Error::ProverConn(err) => write!(f, "Couldn't establish connection with the prover cluster: {}\nPlease check your settings and try again.", err),
-            Error::Offline => write!(f, "This command cannot be performed while offline. Please configure a valid Rusk instance and try again."),
-            Error::Unauthorized => write!(f, "Unauthorized to access this wallet"),
-            Error::IO(err) => write!(f, "An IO error occurred:\n{}", err),
-            Error::Json(err) => write!(f, "A serialization error occurred:\n{}", err),
-            Error::Bytes(err) => write!(f, "A serialization error occurred:\n{:?}", err),
-            Error::Base58(err) => write!(f, "A serialization error occurred:\n{}", err),
-            Error::Canon(err) => write!(f, "A serialization error occurred:\n{:?}", err),
-            Error::Rng(err) => write!(f, "An error occured while using the random number generator:\n{}", err),
-            Error::Phoenix(err) => write!(f, "An error occured in Phoenix:\n{}", err),
-            Error::NotEnoughGas => write!(f, "Not enough gas to perform this transaction"),
-            Error::NotEnoughBalance => write!(f, "Insufficient balance to perform this operation"),
-            Error::AmountIsZero => write!(f, "Amount to transfer/stake cannot be zero"),
-            Error::NoteCombinationProblem => write!(f, "Note combination for the given value is impossible given the maximum amount of inputs in a transaction"),
-            Error::StakingNotAllowed => write!(f, "Staking is only allowed when you're running your own local Rusk instance (Tip: Point `rusk_addr` to \"localhost\" or \"127.0.0.1\")"),
-            Error::AlreadyStaked=> write!(f, "A stake already exists for this key"),
-            Error::NotStaked => write!(f, "A stake does not exist for this key"),
-            Error::NoReward => write!(f, "No reward available for this key"),
-            Error::BadAddress => write!(f, "Invalid address"),
-            Error::AddressNotOwned => write!(f, "Address does not belong to this wallet"),
-            Error::InvalidMnemonicPhrase => write!(f, "Invalid recovery phrase"),
-            Error::NotDirectory => write!(f, "Path provided is not a directory"),
-            Error::WalletFileCorrupted => write!(f, "Wallet file content is not valid"),
-            Error::UnknownFileVersion(major, minor) => write!(f, "File version {}.{} not recognized", major, minor),
-            Error::WalletFileNotExists => write!(f, "Wallet file not found on disk"),
-            Error::WalletFileExists => write!(f, "A wallet file with this name already exists"),
-            Error::WalletFileMissing => write!(f, "No valid wallet path was provided"),
-            Error::InvalidPassword => write!(f, "Wrong password"),
-            Error::SocketsNotSupported(addr) => write!(f, "Socket connection to {} is not available on Windows", addr),
-            Error::StatusWalletConnected => write!(f, "Status callback needs to be set before connecting"),
-        }
-    }
-}
-
-impl fmt::Debug for Error {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            Error::State(err) => write!(f, "{:?}", err),
-            Error::Prover(err) => write!(f, "{:?}", err),
-            Error::Store(err) => write!(f, "{:?}", err),
-            Error::RuskURI(err) => write!(f, "Invalid URI provided for Rusk:\n{:?}", err),
-            Error::Network(err) => write!(f, "A network error occurred while communicating with Rusk:\n{:?}", err),
-            Error::RuskConn(err) => write!(f, "Couldn't establish connection with Rusk:\n{:?}", err),
-            Error::ProverConn(err) => write!(f, "Couldn't establish connection with the prover cluster:\n{:?}", err),
-            Error::Offline => write!(f, "This command cannot be performed while offline. Please configure a valid Rusk instance and try again."),
-            Error::Unauthorized => write!(f, "Unauthorized to access this wallet"),
-            Error::IO(err) => write!(f, "An IO error occurred:\n{:?}", err),
-            Error::Json(err) => write!(f, "A serialization error occurred:\n{:?}", err),
-            Error::Bytes(err) => write!(f, "A serialization error occurred:\n{:?}", err),
-            Error::Base58(err) => write!(f, "A serialization error occurred:\n{:?}", err),
-            Error::Canon(err) => write!(f, "A serialization error occurred:\n{:?}", err),
-            Error::Rng(err) => write!(f, "An error occured while using the random number generator:\n{:?}", err),
-            Error::Phoenix(err) => write!(f, "An error occured in Phoenix:\n{:?}", err),
-            Error::NotEnoughGas => write!(f, "Not enough gas to perform this transaction"),
-            Error::NotEnoughBalance => write!(f, "Insufficient balance to perform this operation"),
-            Error::AmountIsZero => write!(f, "Amount to transfer/stake cannot be zero"),
-            Error::NoteCombinationProblem => write!(f, "Note combination for the given value is impossible given the maximum amount of inputs in a transaction"),
-            Error::StakingNotAllowed => write!(f, "Staking is only allowed when you're running your own local Rusk instance (Tip: Point `rusk_addr` to \"localhost\" or \"127.0.0.1\")"),
-            Error::AlreadyStaked=> write!(f, "A stake already exists for this key"),
-            Error::NotStaked => write!(f, "A stake does not exist for this key"),
-            Error::NoReward => write!(f, "No reward available for this key"),
-            Error::BadAddress => write!(f, "Invalid address"),
-            Error::AddressNotOwned => write!(f, "Address does not belong to this wallet"),
-            Error::InvalidMnemonicPhrase => write!(f, "Invalid recovery phrase"),
-            Error::NotDirectory => write!(f, "Path provided is not a directory"),
-            Error::WalletFileCorrupted => write!(f, "Wallet file content is not valid"),
-            Error::UnknownFileVersion(major, minor) => write!(f, "File version {}.{} not recognized", major, minor),
-            Error::WalletFileNotExists => write!(f, "Wallet file not found on disk"),
-            Error::WalletFileExists => write!(f, "A wallet file with this name already exists"),
-            Error::WalletFileMissing => write!(f, "No valid wallet path was provided"),
-            Error::InvalidPassword => write!(f, "Wrong password"),
-            Error::SocketsNotSupported(addr) => write!(f, "Socket connection to {} is not available on Windows", addr),
-            Error::StatusWalletConnected => write!(f, "Status callback needs to be set before connecting"),
-        }
-    }
-}
-
 /// State client errors
+
 pub enum StateError {
     /// Status of a Rusk request
     Rusk(String),
@@ -368,71 +319,24 @@ impl fmt::Debug for StateError {
 }
 
 /// Prover client errors
+#[derive(Error, Debug)]
 pub enum ProverError {
     /// Status of a Rusk request
-    Rusk(String),
+    #[error("Rusk returned an error:\n{}", self)]
+    Rusk {
+        #[from]
+        source: tonic::Status,
+    },
     /// Bytes encoding errors
-    Bytes(dusk_bytes::Error),
+    #[error("A serialization error occurred:\n")]
+    Bytes(#[from] dusk_bytes::Error),
+
     /// Canonical errors
+    #[error("A serialization error occurred:\n{:?}", self)]
     Canon(canonical::CanonError),
     /// Transaction verification errors
+    #[error("Transaction failed: {}", self)]
     Transaction(String),
-}
-
-impl From<dusk_bytes::Error> for ProverError {
-    fn from(e: dusk_bytes::Error) -> Self {
-        Self::Bytes(e)
-    }
-}
-
-impl From<canonical::CanonError> for ProverError {
-    fn from(e: canonical::CanonError) -> Self {
-        Self::Canon(e)
-    }
-}
-
-impl From<tonic::Status> for ProverError {
-    fn from(s: tonic::Status) -> Self {
-        Self::Rusk(s.message().to_string())
-    }
-}
-
-impl fmt::Display for ProverError {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            ProverError::Rusk(st) => {
-                write!(f, "Rusk returned an error:\n{}", st)
-            }
-            ProverError::Bytes(err) => {
-                write!(f, "A serialization error occurred:\n{:?}", err)
-            }
-            ProverError::Canon(err) => {
-                write!(f, "A serialization error occurred:\n{:?}", err)
-            }
-            ProverError::Transaction(err) => {
-                write!(f, "Transaction failed: {}", err)
-            }
-        }
-    }
-}
-
-impl fmt::Debug for ProverError {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            ProverError::Rusk(st) => {
-                write!(f, "Rusk returned an error:\n{:?}", st)
-            }
-            ProverError::Bytes(err) => {
-                write!(f, "A serialization error occurred:\n{:?}", err)
-            }
-            ProverError::Canon(err) => {
-                write!(f, "A serialization error occurred:\n{:?}", err)
-            }
-            ProverError::Transaction(err) => {
-                write!(f, "Transaction failed: {:?}", err)
-            }
-        }
-    }
 }
 
 /// Store errors
