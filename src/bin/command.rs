@@ -13,6 +13,8 @@ use crate::{io::prompt, WalletFile};
 use dusk_wallet::{Address, Dusk, Gas, Lux, Wallet};
 use dusk_wallet_core::{BalanceInfo, StakeInfo};
 
+//use thiserror_no_std::Error;
+
 /// Commands that can be run against the Dusk wallet
 #[derive(PartialEq, Eq, Hash, Clone, Subcommand, Debug)]
 pub(crate) enum Command {

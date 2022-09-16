@@ -19,6 +19,7 @@ use std::fs;
 use std::path::PathBuf;
 use std::str::FromStr;
 use tracing::{warn, Level};
+use thiserror_no_std::Error;
 
 use bip39::{Language, Mnemonic, MnemonicType};
 use blake3::Hash;

@@ -20,6 +20,7 @@ use requestty::Question;
 use dusk_wallet::{Address, Dusk, Lux, WalletPath};
 
 use crate::Error;
+//use thiserror_no_std::Error;
 
 // use crate::Error::InvalidMnemonicPhrase;
 use dusk_wallet::{

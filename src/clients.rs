@@ -21,6 +21,7 @@ use phoenix_core::{Crossover, Fee, Note};
 use std::path::PathBuf;
 use std::sync::Mutex;
 
+
 use rusk_schema::{
     ExecuteProverRequest, FindExistingNullifiersRequest, GetAnchorRequest,
     GetNotesRequest, GetOpeningRequest, GetStakeRequest, PreverifyRequest,

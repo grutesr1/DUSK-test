@@ -10,6 +10,7 @@ use dusk_wallet::WalletPath;
 use serde::Serialize;
 use std::{fs, io, path::PathBuf};
 use tracing::{error, info};
+//use thiserror_no_std::Error;
 
 /// Default IPC method for Rusk connections
 pub(crate) const IPC_DEFAULT: &str = "uds";
@@ -17,6 +18,7 @@ pub(crate) const IPC_DEFAULT: &str = "uds";
 pub(crate) const RUSK_ADDR: &str = "/tmp/rusk_listener";
 /// Default GraphQL endopoint
 pub(crate) const GQL_ADDR: &str = "http://nodes.dusk.network:9500/graphql";
+
 
 mod parser {
 

@@ -12,10 +12,11 @@ use crate::io;
 use crate::io::Config;
 use crate::io::GraphQL;
 use crate::prompt;
-use crate::Error;
+ use crate::Error;
 use crate::Menu;
 use crate::WalletFile;
 use crate::{Command, RunResult};
+//use thiserror_no_std::Error;
 
 /// Run the interactive UX loop with a loaded wallet
 pub(crate) async fn run_loop(
