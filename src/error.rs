@@ -5,10 +5,14 @@
 // Copyright (c) DUSK NETWORK. All rights reserved.
 
 use crate::store::LocalStore;
+use canonical::CanonError;
 use phoenix_core::Error as PhoenixError;
 //use prost::encoding::bytes;
 use rand_core::Error as RngError;
-use std::{fmt, io};
+use std::{
+    fmt,
+    io::{self, Stderr},
+};
 use tonic::codegen::http;
 
 use super::clients;
@@ -22,7 +26,6 @@ use thiserror::Error;
 /// Errors returned by this library
 
 #[derive(Debug, thiserror::Error)]
-
 
 pub enum Error {
     ///
@@ -231,6 +234,17 @@ impl From<CoreError> for Error {
     }
 }
 
+impl From<CanonError> for StateError {
+    fn from(e: CanonError) -> Self {
+        Self::Canon(e)
+    }
+}
+impl From<dusk_bytes::Error> for StateError {
+    fn from(e: dusk_bytes::Error) -> Self {
+        Self::Bytes(e)
+    }
+}
+
 /// State client errors
 #[derive(Error, Debug)]
 pub enum StateError {
@@ -242,121 +256,26 @@ pub enum StateError {
     },
     /// Bytes encoding errors
     #[error("Rusk returned an error:\n{}", self)]
-    Bytes{
-        #[from]
-        source: dusk_bytes::Error,
-    },
+    Bytes(dusk_bytes::Error),
+
     /// Canonical errors
     #[error("A serialization error occurred:\n{:?}", self)]
-    Canon{
-        #[from]
-        source: canonical::CanonError,
-    },
-    //canonical::CanonError),
-    /// Cache persistence errors
-    //Cache(microkelvin::PersistError),
+    Canon(canonical::CanonError),
+
+    /// Cache errors
     #[error("Failed to read/write cache:\n{:?}", self)]
-    Cache{
+    Cache {
         #[from]
         source: microkelvin::PersistError,
     },
-    
-    
+
     /// I/O errors
     #[error("An I/O error occurred\n{:?}", self)]
-    Io{
+    Io {
         #[from]
-        source:io::Error,
-    }
+        source: io::Error,
+    },
 }
-
-// impl From<microkelvin::PersistError> for StateError {
-//     fn from(e: microkelvin::PersistError) -> Self {
-//         Self::Cache(e)
-//     }
-// }
-
-// impl From<io::Error> for StateError {
-//     fn from(e: io::Error) -> Self {
-//         Self::Io(e)
-//     }
-// }
-
-// impl From<dusk_bytes::Error> for StateError {
-//     fn from(e: dusk_bytes::Error) -> Self {
-//         Self::Bytes(e)
-//     }
-// }
-
-// impl From<canonical::CanonError> for StateError {
-//     fn from(e: canonical::CanonError) -> Self {
-//         Self::Canon(e)
-//     }
-// }
-
-// impl From<tonic::Status> for StateError {
-//     fn from(s: tonic::Status) -> Self {
-//         Self::Rusk(s.message().to_string())
-//     }
-// }
-
-// impl fmt::Display for StateError {
-//     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-//         match self {
-//             StateError::Rusk(st) => {
-//                 write!(f, "Rusk returned an error:\n{}", st)
-//             }
-//             StateError::Bytes(err) => {
-//                 write!(f, "A serialization error occurred:\n{:?}", err)
-//             }
-//             StateError::Canon(err) => {
-//                 write!(f, "A serialization error occurred:\n{:?}", err)
-//             }
-//             StateError::Cache(err) => {
-//                 write!(f, "Failed to read/write cache:\n{:?}", err)
-//             }
-//             StateError::Io(err) => {
-//                 write!(f, "An I/O error occurred {}", err)
-//             }
-//         }
-//     }
-// }
-
-// impl fmt::Debug for StateError {
-//     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-//         match self {
-//             StateError::Rusk(st) => {
-//                 write!(f, "Rusk returned an error:\n{:?}", st)
-//             }
-//             StateError::Bytes(err) => {
-//                 write!(f, "A serialization error occurred:\n{:?}", err)
-//             }
-//             StateError::Canon(err) => {
-//                 write!(f, "A serialization error occurred:\n{:?}", err)
-//             }
-//             StateError::Cache(err) => {
-//                 write!(f, "Failed to read/write cache:\n{:?}", err)
-//             }
-//             StateError::Io(err) => {
-//                 write!(f, "An I/O error occurred {:?}", err)
-//             }
-//         }
-//     }
-// }
-
-
-
-
-
-
-// impl From<dusk_bytes::Error> for ProverError {
-//     fn from(e: dusk_bytes::Error) -> Self {
-//         Self::Bytes(e)
-//     }
-// }
-
-
-
 
 /// Prover client errors
 #[derive(Error, Debug)]
@@ -369,8 +288,8 @@ pub enum ProverError {
     },
     #[error("Rusk returned an error:\n{}", self)]
     /// Bytes encoding errors
-    /// 
-    Bytes( dusk_bytes::Error, fmt()),
+    Bytes(dusk_bytes::Error),
+
     /// Canonical errors
     #[error("A serialization error occurred:\n{:?}", self)]
     Canon(canonical::CanonError),
@@ -379,32 +298,11 @@ pub enum ProverError {
     Transaction(String),
 }
 
-
-
-
-impl fmt::Display for ProverError::bytes {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match ProverError::Bytes {
-            ProverError::Bytes(err) => {
-                write!(f, "A serialization error occurred:\n{:?}", err)
-            }
-        }
+impl From<dusk_bytes::Error> for ProverError {
+    fn from(e: dusk_bytes::Error) -> Self {
+        Self::Bytes(e)
     }
 }
-
-impl fmt::Debug for Bytes {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match ProverError::Bytes{
-            ProverError::Bytes(err) => {
-                write!(f, "A serialization error occurred:\n{:?}", err)
-            }
-         
-        }
-    }
-}
-
-
-
 
 /// Store errors
 pub enum StoreError {}
